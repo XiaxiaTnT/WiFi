@@ -18,7 +18,7 @@ import serverlet.OfflineData;
 
 public class MyServlet extends HttpServlet{
 	private static final long serialVersionUID = -9122125709896866661L;
-	static OfflineData offline;
+	//static OfflineData offline;
 	public static String rssregex="(.*?)=(.*?);";
 	public static Pattern rsspattern=Pattern.compile(rssregex);
 	protected void doPost(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException{
@@ -41,9 +41,9 @@ public class MyServlet extends HttpServlet{
 	}
 	protected void doGet(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException{
 		String Request=req.getParameter("request");
-		System.out.println(Request);
-		OfflineData.Options options = new OfflineData.Options(1.0,1.0,27, -99, -100);
-		offline = new OfflineData(options);
+		//System.out.println(Request);
+//		OfflineData.Options options = new OfflineData.Options(1.0,1.0,27, -99, -100);
+//		OfflineData offline = new OfflineData(options);
 		Map<String, Double> onrss=new HashMap<>();
 		Matcher mt=rsspattern.matcher(Request);
 		while(mt.find()) {
@@ -69,6 +69,8 @@ public class MyServlet extends HttpServlet{
 	 * @param index 表示第几个线上点
 	 */
 	public static Point KNN(Map<String, Double> onrss, int k, boolean usePenalty) {
+		OfflineData.Options options = new OfflineData.Options(1.0,1.0,27, -99, -100);
+		OfflineData offline = new OfflineData(options);
 		Map<Double, Integer> distanceMap = new TreeMap<>();// 位置（0-129）-距离
 		int p = 0;
 		//System.out.println(offline.avgRssList);
@@ -77,27 +79,34 @@ public class MyServlet extends HttpServlet{
 			Map<String, Double> offrss = offline.avgRssList.get(i);
 			//System.out.println(offline.avgRssList);
 			Map<String, Double> penaltyMap = offline.penaltyList.get(i);
+			//System.out.println(offrss);
+			//System.out.println(penaltyMap);
 			double distance, sum = 0;
 			for (int j = 0; j < offline.aplist.size(); j++) {
 				double penalty = penaltyMap.get(offline.aplist.get(j));
 				double off, on;
-				if (offrss.get(offline.aplist.get(j)) != null)
+				if (offrss.get(offline.aplist.get(j)) != null) {
 					off = offrss.get(offline.aplist.get(j));
+					//System.out.println("get1");
+					}
 				else
 					off = -100.0;
 
-				if (onrss.get(offline.aplist.get(j)) != null)
+				if (onrss.get(offline.aplist.get(j)) != null) {
 					on = onrss.get(offline.aplist.get(j));
+					//System.out.println("get2");
+					}
 				else
-					on = -100.0;
+					on = -100.1;
 				sum += usePenalty ? penalty * (off - on) * (off - on) : (off - on) * (off - on);
 			}
 			distance = Math.sqrt(sum);
 			distanceMap.put(distance, i);
-			//System.out.println(distanceMap.size());
+			System.out.println(distance+" "+i);
 			//System.out.println(distance);
 			// System.out.println(Constant.OFF_POS_ARR[p++]+" distance "+": "+distance);//输出off与on的距离
 		}
+		System.out.println(distanceMap);
 		double xsum = 0.0, ysum = 0.0;
 		int kk = 0;
 		for (Double d : distanceMap.keySet()) {
@@ -107,6 +116,7 @@ public class MyServlet extends HttpServlet{
 			xsum += offline.points[pos].x;
 			ysum += offline.points[pos].y;
 			//System.out.println(offline.points[pos] + " d=" + d);
+			System.out.println(offline.points[pos].toString());
 		}
 		Point result = new Point(xsum / k, ysum / k);
 		return result;

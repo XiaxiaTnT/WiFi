@@ -27,12 +27,12 @@ public class OfflineData {
 	public static List<List<Map<String, Double>>> allRss=new ArrayList<>();//二者只初始化一次
 	List <Integer[]> apVectors=new ArrayList<>();/**0-n向量组成的数组记录AP是否出现若干次*/
 
-	List<Map<String, Double>> penaltyList=new ArrayList<>();/**和平均值相对于 记录每个点每个AP的可信度(1-P(miss)) */
+	public static List<Map<String, Double>> penaltyList=new ArrayList<>();/**和平均值相对于 记录每个点每个AP的可信度(1-P(miss)) */
 	public static List<Map<String, Double>> avgRssList=new ArrayList<>();/**平均值*/
 	
 	/**每个点每个AP出现的RSS以及对应的次数 每一层大小：130*density-26-n 
 	 * 使用TreeMap保证RSS是升序的 TreeMap的list按AP顺序添加*/
-	List <List<TreeMap<Double, Integer>>> rssVectors=new ArrayList<>();
+	//List <List<TreeMap<Double, Integer>>> rssVectors=new ArrayList<>();
 	
 	public Point[] points;
 	
@@ -111,19 +111,20 @@ public class OfflineData {
 		initPos();
 		initPoints();
 		initRSSData();
-		buildRssVectorList();//build的是全部的情况
+		//buildRssVectorList();//build的是全部的情况
 		buildPenaltyList();
 		generateAvgRss(allRss);
 	}
 	public void initAps() {
 		try {
+			aplist =new ArrayList<>();
 			Statement stmt=new ConnectDB().Connect();
 			String findaps="select * from aps;";
 			ResultSet rs=stmt.executeQuery(findaps);
 			while(rs.next()) {
 				aplist.add(rs.getString("ap"));
 			}
-			//System.out.println(aplist);
+			System.out.println(aplist);
 			rs.close();
 			stmt.close();
 		}catch(Exception e) {
@@ -132,6 +133,10 @@ public class OfflineData {
 	}
 	public void initPos() {
 		try {
+			posxlist=new ArrayList<>();
+			posylist=new ArrayList<>();
+			XArr=new ArrayList<>();
+			YArr=new ArrayList<>();
 			Statement stmt=new ConnectDB().Connect();
 			String findpos="select * from postion;";
 			ResultSet rs=stmt.executeQuery(findpos);
@@ -144,8 +149,10 @@ public class OfflineData {
 				XArr.add(Double.parseDouble(x));
 				YArr.add(Double.parseDouble(y));
 			}
-			//System.out.println(XArr);
-			//System.out.println(YArr);
+			rs.close();
+			stmt.close();
+			System.out.println(XArr);
+			System.out.println(YArr);
 		}catch(Exception e) {
 			e.getMessage();
 		}
@@ -159,13 +166,17 @@ public class OfflineData {
 	
 	public void initRSSData(){
 		try {
+			allRss=new ArrayList<>();
+			apVectors=new ArrayList<>();
 			String line;
 			Map<String,Double> eachTimeRss = null;
 			List<Map<String, Double>> eachPosRss = null;//大小110（次）
-			Integer[] apVector=new Integer[aplist.size()];//0-n向量
-			Tools.cleanArr(apVector);
+			//Integer[] apVector=new Integer[aplist.size()];//0-n向量
+			//Tools.cleanArr(apVector);
 			for(int j=0;j<posxlist.size();j++) {
 				eachPosRss=new ArrayList<>(64);
+				Integer[] apVector=new Integer[aplist.size()];//0-n向量
+				Tools.cleanArr(apVector);
 				Statement stmt=new ConnectDB().Connect();
 				String findrss="select * from rss where posx='"+posxlist.get(j)+"' and posy='"+posylist.get(j)+"';";
 				ResultSet rs=stmt.executeQuery(findrss);
@@ -184,10 +195,24 @@ public class OfflineData {
 					}
 					eachPosRss.add(eachTimeRss);
 				}
+				rs.close();
+				stmt.close();
+				
 				allRss.add(eachPosRss);
 				apVectors.add(apVector);
-				Tools.cleanArr(apVector);
+//				for(Integer e:apVector) {
+//					System.out.print(e+" ");
+//				}
+//				System.out.println();
+				//System.out.println(apVector.length);
+				//Tools.cleanArr(apVector);
 			}
+//			for(int i=0;i<apVectors.size();i++) {
+//				for(int j=0;j<apVectors.get(i).length;j++) {
+//					System.out.print(apVectors.get(i)[j]);
+//				}
+//				System.out.println();
+//			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -195,6 +220,7 @@ public class OfflineData {
 	private void generateAvgRss(List<List<Map<String, Double>>> rssList){
 		int []count=new int [aplist.size()];
 		double []sum=new double[aplist.size()];
+		avgRssList=new ArrayList<>();
 		for(List<Map<String, Double>> eachpos : rssList){
 			Map<String,Double> eachavgrss=new HashMap<>();
 			avgRssList.add(eachavgrss);
@@ -219,39 +245,42 @@ public class OfflineData {
 		}
 	}
 	
-	public void buildRssVectorList(){
-		for(List<Map<String, Double>> onePosRss:allRss){//130次
-			List<TreeMap<Double, Integer>> apRssList=new ArrayList<>(aplist.size());//相对于ap的list，表示每一个ap的出现的值和次数
-			for(String ap:aplist){//27次
-				TreeMap<Double, Integer> oneApRss=new TreeMap<>();
-				for(Map<String,Double> oneTimeRss:onePosRss){
-					
-					if(oneTimeRss.get(ap)!=null){
-						double rss=oneTimeRss.get(ap);
-						if(oneApRss.containsKey(rss)){
-							int times=oneApRss.get(rss);
-							oneApRss.put(rss, ++times);
-						}else
-							oneApRss.put(rss, 1);
-					}
-					
-				}
-				apRssList.add(oneApRss);
-			}
-			rssVectors.add(apRssList);
-		}
-	}
+//	public void buildRssVectorList(){
+//		for(List<Map<String, Double>> onePosRss:allRss){//130次
+//			List<TreeMap<Double, Integer>> apRssList=new ArrayList<>(aplist.size());//相对于ap的list，表示每一个ap的出现的值和次数
+//			for(String ap:aplist){//27次
+//				TreeMap<Double, Integer> oneApRss=new TreeMap<>();
+//				for(Map<String,Double> oneTimeRss:onePosRss){
+//					
+//					if(oneTimeRss.get(ap)!=null){
+//						double rss=oneTimeRss.get(ap);
+//						if(oneApRss.containsKey(rss)){
+//							int times=oneApRss.get(rss);
+//							oneApRss.put(rss, ++times);
+//						}else
+//							oneApRss.put(rss, 1);
+//					}
+//					
+//				}
+//				apRssList.add(oneApRss);
+//			}
+//			rssVectors.add(apRssList);
+//		}
+//	}
 	
 	/**
 	 * 直接对apVector处理 通过计算missed AP的概率计算每一个点每一个ap的可信度 用此方法 定位精度最高
 	 */
 	public void buildPenaltyList(){
+		penaltyList=new ArrayList<>();
 		for(Integer[] apVector:apVectors){
 			Map<String,Double> map=new HashMap<>();
 			for(int i=0;i<apVector.length;i++){
-				double prob=apVector[i]/110.0;
+				double prob=apVector[i]*1.0/64.0;
+				//System.out.print(apVector[i]);
 				map.put(aplist.get(i), prob);
 			}
+			//System.out.println();
 			penaltyList.add(map);
 		}
 	}	
