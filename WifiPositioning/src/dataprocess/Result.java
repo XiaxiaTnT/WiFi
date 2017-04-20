@@ -27,18 +27,17 @@ public class Result {
 			variancesum+=(d-avgdeviation)*(d-avgdeviation);
 		}
 		double variance=Math.sqrt(variancesum);
-		System.out.println("average deviation:"+avgdeviation+"  variance:"+variance);
+		this.averageDeviation=avgdeviation;
+		this.variance=variance;
+		//System.out.println("average deviation:"+this.averageDeviation+"  variance:"+this.variance);
 	}
-	
+	public double getaverageDeviation() {
+		return this.averageDeviation;
+	}
+	public double getvariance() {
+		return this.variance;
+	}
 	public Result(){
 		
 	}
-	
-	public static void main(String[] args) {
-		int a=7,b=17;
-		double c=11;
-		System.out.println(a/c);
-		System.out.println(b/a);System.out.println(c/a);
-	}
-	
 }

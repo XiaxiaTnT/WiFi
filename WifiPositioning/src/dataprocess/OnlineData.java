@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
@@ -46,19 +48,24 @@ public class OnlineData {
 	}
 	
 	
-	public OnlineData(String path, double td) {
+	public OnlineData(String path, double td,List<Integer> times) {
 		timeDensity=td;
+		points=new Point[Constant.ON_POS_ARR.length];
+		allRss=new ArrayList<>(46);
+		apVectors=new ArrayList<>(46);
+		avgRssList=new ArrayList<>();
+		rssVectors=new ArrayList<>();
 		initPoints();
 		initBr(path);
-		initRSSData();
+		initRSSData(times);
 		buildRssVectorList();//build的是全部的情况
-
-		if(timeDensity==1)
-			generateAvgRss(allRss);
-		else if(timeDensity<1){
-			List<List<Map<String, Double>>> tempRss=initRandTimeRss(timeDensity,timeDensity);
-			generateAvgRss(tempRss);
-		}
+		generateAvgRss(allRss);
+//		if(timeDensity==1)
+//			generateAvgRss(allRss);
+//		else if(timeDensity<1){
+//			List<List<Map<String, Double>>> tempRss=initRandTimeRss(timeDensity,timeDensity);
+//			generateAvgRss(tempRss);
+//		}
 	}
 	
 	public void initPoints(){
@@ -70,15 +77,18 @@ public class OnlineData {
 	/**
 	 * eachTimeRss中只put了能侦测到的ap以及对应的rss
 	 */
-	public void initRSSData(){
+	public void initRSSData(List<Integer> Ltimes){
 		try {
 			String line;
 			Map<String,Double> eachTimeRss = null;
 			List<Map<String, Double>> eachPosRss = null;//大小110（次）
 			Integer[] apVector=new Integer[aplist.size()];//0-1向量
+			int Ntimes=0;
 			while((line=br.readLine())!=null ){
+				//System.out.println(Ntimes);
 				Matcher newline_matcher=Constant.newline_pattern.matcher(line);
 				if(newline_matcher.find()&&line.contains(Constant.fixedid)){
+					if(Ltimes.contains(Ntimes)) {
 					eachTimeRss=new HashMap<>();
 					String target=line.replace(Constant.fixedid, "");
 					Matcher rm=Constant.rss_pattern.matcher(target);
@@ -90,10 +100,14 @@ public class OnlineData {
 						if(aplist.contains(each_ap))//因为有线下不存在的ap
 							apVector[aplist.indexOf(each_ap)]++;
 					}
-					eachPosRss.add(eachTimeRss);//先添加	
+					eachPosRss.add(eachTimeRss);//先添加
+					}
+					Ntimes++;
+			
 				}
 				Matcher starttime_matcher=Constant.starttime_pattern.matcher(line);
 				if(starttime_matcher.find()){
+					Ntimes=0;
 					eachPosRss=new ArrayList<>(110);
 					apVector=new Integer[aplist.size()];
 					Tools.cleanArr(apVector);;
@@ -109,30 +123,30 @@ public class OnlineData {
 		}
 	}
 	
-	public List<List<Map<String, Double>>> initRandTimeRss(double pd,double td){
-		List<List<Map<String, Double>>> randRssList=new ArrayList<>();
-		TreeSet<Integer> tset=Tools.generateRandArr(td, 110);
-
-		List<Map<String, Double>> eachPosRss = null;
-		Map<String,Double> eachTimeRss = null;
-		for(List<Map<String, Double>> maplist:allRss){
-			eachPosRss=new ArrayList<>();//大小为110*td
-			
-			for(Map<String,Double> map:maplist){
-				if(tset.contains(maplist.indexOf(map))){//110次中的一些随机 次数减少 apVector/rssVector啥的也在变
-					eachTimeRss=new HashMap<>();
-					eachPosRss.add(eachTimeRss);//先添加	
-					
-					for(String ap:map.keySet())
-						eachTimeRss.put(ap, map.get(ap));
-					
-				}
-			}
-			
-			randRssList.add(eachPosRss);	
-		}
-		return randRssList;
-	}
+//	public List<List<Map<String, Double>>> initRandTimeRss(double pd,double td){
+//		List<List<Map<String, Double>>> randRssList=new ArrayList<>();
+//		TreeSet<Integer> tset=Tools.generateRandArr(td, 110);
+//
+//		List<Map<String, Double>> eachPosRss = null;
+//		Map<String,Double> eachTimeRss = null;
+//		for(List<Map<String, Double>> maplist:allRss){
+//			eachPosRss=new ArrayList<>();//大小为110*td
+//			
+//			for(Map<String,Double> map:maplist){
+//				if(tset.contains(maplist.indexOf(map))){//110次中的一些随机 次数减少 apVector/rssVector啥的也在变
+//					eachTimeRss=new HashMap<>();
+//					eachPosRss.add(eachTimeRss);//先添加	
+//					
+//					for(String ap:map.keySet())
+//						eachTimeRss.put(ap, map.get(ap));
+//					
+//				}
+//			}
+//			
+//			randRssList.add(eachPosRss);	
+//		}
+//		return randRssList;
+//	}
 
 	private void generateAvgRss(List<List<Map<String, Double>>> rssList){
 		int []count=new int [aplist.size()];
@@ -186,51 +200,51 @@ public class OnlineData {
 	}
 	
 
-	public static void showMapList(List<Map<String,Double>> list){
-		System.out.println("size="+list.size());
-		int i=0;
-		for(Map<String,Double> map:list){
-			System.out.println(Constant.ON_POS_ARR[i++]);
-			for(String ap:map.keySet())
-				System.out.println(ap+" "+map.get(ap));
-		}
-	}
+//	public static void showMapList(List<Map<String,Double>> list){
+//		System.out.println("size="+list.size());
+//		int i=0;
+//		for(Map<String,Double> map:list){
+//			System.out.println(Constant.ON_POS_ARR[i++]);
+//			for(String ap:map.keySet())
+//				System.out.println(ap+" "+map.get(ap));
+//		}
+//	}
 	
-	public static void showApVectorList(List<Integer[]> list){
-		int i=0;
-		for(Integer[] arr:list){
-			System.out.println(Constant.ON_POS_ARR[i++]);
-			int k=0;
-			for(int j=0;j<arr.length;j++){
-				if(arr[j]!=0){
-					System.out.println(aplist.get(j)+" "+arr[j]);
-					k++;
-				}
-			}
-			System.out.println("ap number at this point is "+k);
-		}
-	}
+//	public static void showApVectorList(List<Integer[]> list){
+//		int i=0;
+//		for(Integer[] arr:list){
+//			System.out.println(Constant.ON_POS_ARR[i++]);
+//			int k=0;
+//			for(int j=0;j<arr.length;j++){
+//				if(arr[j]!=0){
+//					System.out.println(aplist.get(j)+" "+arr[j]);
+//					k++;
+//				}
+//			}
+//			System.out.println("ap number at this point is "+k);
+//		}
+//	}
 	
-	public static void showRssVectorList(List <List<Map<Double, Integer>>> list){
-		System.out.println("size="+list.size());
-		int i=0;
-		for(List<Map<Double, Integer>> apRssList:list){
-			System.out.println(Constant.ON_POS_ARR[i++]+"  ****************************************");
-			int j=0;
-			for(Map<Double, Integer> map:apRssList){
-				if(!map.isEmpty()){
-					System.out.println(aplist.get(j));
-					int total=0;
-					for(double rss:map.keySet()){
-						total+=map.get(rss);
-						System.out.println("rss="+rss+" times="+map.get(rss));
-					}
-					System.out.println("total times="+total);
-				}				
-				j++;
-			}
-		}
-	}
+//	public static void showRssVectorList(List <List<Map<Double, Integer>>> list){
+//		System.out.println("size="+list.size());
+//		int i=0;
+//		for(List<Map<Double, Integer>> apRssList:list){
+//			System.out.println(Constant.ON_POS_ARR[i++]+"  ****************************************");
+//			int j=0;
+//			for(Map<Double, Integer> map:apRssList){
+//				if(!map.isEmpty()){
+//					System.out.println(aplist.get(j));
+//					int total=0;
+//					for(double rss:map.keySet()){
+//						total+=map.get(rss);
+//						System.out.println("rss="+rss+" times="+map.get(rss));
+//					}
+//					System.out.println("total times="+total);
+//				}				
+//				j++;
+//			}
+//		}
+//	}
 	
 	private void initBr(String path){
 		file=new File(path);

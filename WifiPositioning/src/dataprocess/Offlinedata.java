@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dataprocess.Offlinedata.Options;
 import processdataset.Constant;
 
 import processdataset.Tools;
@@ -64,64 +65,54 @@ public class Offlinedata {
 	private static double availableRSS=-1000;//是每次的可用值还是平均值可用？
 	
 	
-	public static final double []posXlist_1={-23.5,-22.0,-20.5,-19.0,-17.5,-16.0,-14.5,-13.0,-11.5,-10.0,-8.5,-7.0,-5.5,-4.0,-2.5,-1.0,//位置1
-											 -23.5,-22.0,-20.5,-19.0,-17.5,-16.0,-14.5,-13.0,-11.5,-10.0,-8.5,-7.0,-5.5,-4.0,-2.5,-1.0,
-											   2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0, 2.0, 2.0, //位置2
-											   0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5, 0.5, 0.5,
-											   0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,//pos3
-											   2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,
-											   3.5,  5.0,  6.5,  8.0,  9.5, 11.0, 12.5, 14.0, 15.5, 17.0,18.5,20.0,21.5,23.0,24.5,26.0,27.5,29.0,30.5,32.0,//pos4 cricle
+	public static final double []posXlist_1={-23.5,-22.0,-20.5,-19.0,-17.5,-16.0,-14.5,-13.0,-11.5,-10.0,-8.5,-7.0,-5.5,-4.0,-2.5,-1.0,//1
+											 -23.5,-22.0,-20.5,-19.0,-17.5,-16.0,-14.5,-13.0,-11.5,-10.0,-8.5,-7.0,-5.5,-4.0,-2.5,-1.0,//2
+											   2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0, 2.0, 2.0, //3
+											   0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5, 0.5, 0.5,//4
+											   0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,  0.5,//5
+											   2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,  2.0,//6
+											   3.5,  5.0,  6.5,  8.0,  9.5, 11.0, 12.5, 14.0, 15.5, 17.0,18.5,20.0,21.5,23.0,24.5,26.0,27.5,29.0,30.5,32.0,//7 circle
 											  32.0,	32.0,
 											  32.0,	30.5, 29.0,	27.5, 26.0,	24.5, 23.0,	21.5, 20.0,	18.5,17.0,15.5,14.0,12.5,11.0, 9.5,	8.0, 6.5, 5.0, 3.5,
-											   9.5,  9.5, 11.0,	12.5, 12.5,	11.0,//pos5
-											  21.5,	21.5, 23.0,	23.0, 24.5,	26.0, 26.0,	24.5,};//pos6
-	public static final double []posYlist_1={-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,
-											  -9.25, -9.25,	-9.25, -9.25, -9.25, -9.25,	-9.25, -9.25, -9.25, -9.25,	-9.25, -9.25, -9.25, -9.25,	-9.25, -9.25,
-											 -18.25,-16.75,-15.25,-13.75,-12.25,-10.75,	-9.25, -7.75, -6.25, -4.75,	-3.25, -1.75,
-											 -18.25,-16.75,-15.25,-13.75,-12.25,-10.75,	-9.25, -7.75, -6.25, -4.75,	-3.25, -1.75,
-											   0.5,   2.0,   3.5,	5.0,   6.5,   8.0,   9.5,  11.0,  12.5,
-											  12.5,  11.0,   9.5,   8.0,   6.5,   5.0,   3.5,   2.0,   0.5,
-											   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,	3.5,   3.5,   3.5,   3.5,   3.5,3.5,3.5,3.5,3.5,
+											   9.5,  9.5, 11.0,	12.5, 12.5,	11.0,//8
+											  21.5,	21.5, 23.0,	23.0, 24.5,	26.0, 26.0,	24.5,};//9
+	public static final double []posYlist_1={-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,//1
+											  -9.25, -9.25,	-9.25, -9.25, -9.25, -9.25,	-9.25, -9.25, -9.25, -9.25,	-9.25, -9.25, -9.25, -9.25,	-9.25, -9.25,//2
+											 -18.25,-16.75,-15.25,-13.75,-12.25,-10.75,	-9.25, -7.75, -6.25, -4.75,	-3.25, -1.75,//3
+											 -18.25,-16.75,-15.25,-13.75,-12.25,-10.75,	-9.25, -7.75, -6.25, -4.75,	-3.25, -1.75,//4
+											   0.5,   2.0,   3.5,	5.0,   6.5,   8.0,   9.5,  11.0,  12.5,//5
+											  12.5,  11.0,   9.5,   8.0,   6.5,   5.0,   3.5,   2.0,   0.5,//6
+											   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,	3.5,   3.5,   3.5,   3.5,   3.5,3.5,3.5,3.5,3.5,//7 circle
 											   5.0,	  6.5,
 											   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,   8.0,8.0,8.0,8.0,8.0,
-											   6.5,   5.0,   5.0,   5.0,   6.5,   6.5,
-											   6.5,   5.0,   5.0,   6.5,   6.5,   6.5,   5.0,   5.0,};
+											   6.5,   5.0,   5.0,   5.0,   6.5,   6.5,//8
+											   6.5,   5.0,   5.0,   6.5,   6.5,   6.5,   5.0,   5.0,};//9
 	
-	public static final double []posXlist_2= { -23.5,-17.5, -11.5 ,-5.5,
-			     							   -20.5,-14.5, -8.5 ,-2.5,
-			     							     2.0,  2.0,  2.0,
-			     							     0.5,  0.5,  0.5,
-			     							     0.5,  0.5,  0.5,
-			     							     2.0,  2.0,
-			     							     3.5,  9.5,  15.5,  21.5,  27.5,
-			     							     29.0, 23.0, 17.0,  11.0,   5.0,
-			     							     12.5,
-			     							     24.5,
+	public static final double []posXlist_2= { -23.5,-20.5,-17.5, -14.5,-11.5 ,-8.5 ,-5.5,-2.5,//1		     							    
+			     							     2.0,  2.0,  2.0, 2.0,  2.0,  2.0,//3
+			     							    2.0,  2.0,  2.0, 2.0,  2.0,//6
+			     							    5.0,8.0,11.0,14.0,17.0,20.0,23.0,26.0,29.0,32.0,32.0,//7
+			     							    11.0,//8
+			     							    23.0,26.0,//9
 	};
-	public static final double []posYlist_2= {-10.75,-10.75,-10.75,-10.75,
-											   -9.25, -9.25, -9.25, -9.25,
-											   -18.25,-12.25,-6.25,
-											   -15.25,-9.25,-3.25,
-											     0.5,  6.5  ,12.5,
-											     9.5,  3.5,
-											     3.5,  3.5,  3.5,  3.5,  3.5,
-											     8.0,  8.0,  8.0,  8.0,  8.0, 
-											     6.5,
-											     6.5,
-											   
+	public static final double []posYlist_2= {-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,//1								  
+											   -18.25,-15.25,-12.25,-9.25,-6.25,-3.25,//3
+											    12.5,9.5,6.5,3.5,0.5,//6
+											    3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,   3.5,6.5,//7
+											    6.5,//8
+											    6.5,6.5,//9										   
 	};
-	public static final double []posXlist_3= {-23.5,-14.5,-5.5,        -19.0,-10.0,-1.0,  2.0, 2.0,     0.5, 0.5,        0.5,  2.0,2.0,  3.5,12.5,21.5,30.5,   26.0,17.0,8.0,};
-	public static final double []posYlist_3= {-10.75,-10.75,-10.75,   -9.25,-9.25,-9.25, -18.25,-9.25,  -13.75,-4.75,    5.0,  9.5,0.5,  3.5,3.5,3.5,3.5,      8.0,8.0,8.0, };
+	public static final double []posXlist_3= {-23.5,-19.0,-14.5,-10.0,-5.5,-1.0,            2.0, 2.0,2.0,2.0,             2.0,2.0,2.0,    3.5,8.0,12.5,17.0,21.5,26.0,30.5,30.5,26.0,21.5,17.0,12.5,8.0,3.5,};
+	public static final double []posYlist_3= {-10.75,-10.75,-10.75,-10.75,-10.75,-10.75,    -18.25,-13.75,-9.25,-4.75,    9.5,5.0,0.5,     3.5,3.5,3.5,3.5,3.5,3.5,3.5,8.0,8.0,8.0,8.0,8.0,8.0,8.0, };
 	
+	public static final double []posXlist_4= {-23.5,-17.5,-11.5,-5.5,         2.0,2.0,2.0,            2.0,2.0,2.0,     3.5,9.5,15.5,21.5,27.5,}; 
+	public static final double []posYlist_4= {-10.75,-10.75,-10.75,-10.75,    -18.25,-12.25,-6.25,    12.5,6.5,0.5,    3.5,3.5,3.5,3.5,3.5,};
 	
-	public static final double []posXlist_4= {-23.5,-11.5,    -17.5,-5.5,    2.0,2.0,      0.5,     0.5,0.5,    2.0,  3.5,15.5,27.5,  32.0,21.5,9.5,}; 
-	public static final double []posYlist_4= {-10.75,-10.75,   -9.25,-9.25, -18.25,-6.25  ,  -12.25,  0.5,12.5,  6.5,  3.5,3.5,3.5,    8.0,8.0,8.0,};
+	public static final double []posXlist_5= {-23.5,-16.0,-8.5,-1.0 ,          2.0,2.0,2.0,           2.0,2.0,     3.5,11.0,18.5,26.0,};
+	public static final double []posYlist_5= {-10.75,-10.75,-10.75,-10.75,     -18.25,-10.75,-3.25,   12.5,5.0,    3.5,3.5,3.5,3.5,};
 	
-	public static final double []posXlist_5= {-23.5,-8.5,	  -16.0,-1.0 ,   2.0,2.0,        0.5,     0.5,  2.0,   3.5,18.5 ,26.0,11.0,};
-	public static final double []posYlist_5= {-10.75,-10.75,  -9.25,-9.25,    -18.25, -3.25 , -10.75  ,5.0,  12.5,  3.5,3.5  ,8.0,8.0,};
-	
-	public static final double []posXlist_6= {-23.5,-5.5,    -14.5,   2.0,   0.5,   0.5, 2.0,  3.5,21.5,  30.5, 12.5,};
-	public static final double []posYlist_6= {-10.75,-10.75, -9.25,  -18.25, -9.25, 9.5, 0.5,  3.5,3.5,    8.0,8.0,};
+	public static final double []posXlist_6= {-23.5,-14.5,-5.5,        2.0,2.0,        2.0,2.0,   3.5,12.5,21.5,30.5,};
+	public static final double []posYlist_6= {-10.75,-10.75,-10.75,   -18.25,-9.25,    9.5,0.5,   3.5,3.5,3.5,3.5,};
 	public static class Options{
 //		double pDensity=1.0;//采集点密度
 //		double tDensity=1.0;//采集次数密度
@@ -162,17 +153,42 @@ public class Offlinedata {
 	}
 	
 	
-	public Offlinedata(Options options,int width,int time){
+	public void Offlinedatas(Options options,int width,List<Integer> ltimes){
 		defaultRSS=options.defaultRSS;
 		availableRSS=options.availableRSS;
 		neglect_frequency=options.neglect_frequency;
-		initRssData(width,time);
+		allRss=new ArrayList<>();
+		apVectors=new ArrayList<>();
+		aplist=new ArrayList<>();
+		penaltyList=new ArrayList<>();
+		avgRssList=new ArrayList<>();
+		initRssData(width,ltimes);
 		initPoints();
 		buildRssVectorList();
-		buildPenaltyList(time);
+		buildPenaltyList(ltimes.size());
 		generateAvgRss(allRss);
 	}
 	
+
+	public  Offlinedata(Options options, int width, List<Integer> ltimes) {
+		// TODO Auto-generated constructor stub
+		defaultRSS=options.defaultRSS;
+		availableRSS=options.availableRSS;
+		neglect_frequency=options.neglect_frequency;
+		allRss=new ArrayList<>();
+		apVectors=new ArrayList<>();
+		aplist=new ArrayList<>();
+		penaltyList=new ArrayList<>();
+		avgRssList=new ArrayList<>();
+		rssVectors=new ArrayList<>();
+		initRssData(width,ltimes);
+		initPoints();
+		buildRssVectorList();
+		buildPenaltyList(ltimes.size());
+		generateAvgRss(allRss);
+	}
+
+
 	public static final String[]AP_ARR= {  
 			"00:14:BF:B1:7C:54",
 			"00:16:B6:B7:5D:8F",
@@ -212,18 +228,12 @@ public class Offlinedata {
 	}
 	
 	
-	public void initRssData(int width,int times){
+	public void initRssData(int width,List<Integer> Ltimes){
 		aplist=Arrays.asList(AP_ARR);
 		//生成每个位置取数据的随机数
-		List<Integer> Ltimes=new ArrayList<>();
-		Random rd=new Random();
-		while(Ltimes.size()<times){
-			int r=rd.nextInt(109);
-			if(!Ltimes.contains(r)){
-				Ltimes.add(r);
-			}
-		}
-		Collections.sort(Ltimes);
+		posXlist=new ArrayList<>();
+		posYlist=new ArrayList<>();
+		
 		if(width==1) {
 			for(int i=0;i<posXlist_1.length;i++) {
 				posXlist.add(Double.toString(posXlist_1[i]));
@@ -306,9 +316,11 @@ public class Offlinedata {
 						eachPosRss.add(eachTimeRss);
 					}
 					Ntimes++;
+					//System.out.print(Ntimes);
 				}
 				Matcher starttime_matcher=Offlinedata.starttime_pattern.matcher(line);
 				if(starttime_matcher.find()){
+					//System.out.println();
 					Ntimes=0;
 					isstart=true;
 					flag=false;
@@ -407,17 +419,17 @@ public class Offlinedata {
 	
 	
 	
-	public static void main(String []args){
-		Options op=new Options();
-		op.availableRSS=-100;
-		Offlinedata offline=new Offlinedata(op,4,100);
-		//Tools.displayAllRSS(allRss, aplist);
-//		System.out.println(posXlist);
-//		System.out.println(posYlist);
-		System.out.println(posXlist.size());
-		System.out.println(allRss.size());
-		for(int i=0;i<points.length;i++) {
-			System.out.print(points[i]);
-		}
-	}
+//	public static void main(String []args){
+//		Options op=new Options();
+//		op.availableRSS=-100;
+//		Offlinedata offline=new Offlinedata(op,4,100);
+//		//Tools.displayAllRSS(allRss, aplist);
+////		System.out.println(posXlist);
+////		System.out.println(posYlist);
+//		System.out.println(posXlist.size());
+//		System.out.println(allRss.size());
+//		for(int i=0;i<points.length;i++) {
+//			System.out.print(points[i]);
+//		}
+//	}
 }

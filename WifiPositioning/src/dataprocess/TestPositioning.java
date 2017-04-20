@@ -1,9 +1,12 @@
 package dataprocess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
 /*****
@@ -13,27 +16,63 @@ import java.util.TreeMap;
 public class TestPositioning {
 	static Offlinedata offline;
 	static OnlineData online;
-	static Result results = new Result();
+	static Result results1 = new Result();
+	static Result results2=new Result();
+	static Result results3=new Result();
 	static List<String> aplist;// = Arrays.asList(Constant.AP_ARR);// APLIST必须统一使用offline的
 	
+	public void test(int nnn,int ttt) {
+		results1=new Result();
+		results2=new Result();
+		List<Integer> Ltimes=new ArrayList<>();
+		Random rd=new Random();
+		while(Ltimes.size()<ttt){
+			int r=rd.nextInt(109);
+			if(!Ltimes.contains(r)){
+				Ltimes.add(r);
+			}
+		}
+		Collections.sort(Ltimes);
+		Offlinedata.Options options = new Offlinedata.Options(27, -99, -100);
+		offline = new Offlinedata(options,nnn,Ltimes);
+		aplist=offline.aplist;
+		//System.out.println(offline.posXlist.size());
+		online = new OnlineData(Constant.ON_PATH, 1.0,Ltimes);
+		// 对46个线下点进行定位
+			for (int c = 0; c < 46; c++) {
+				KNN(online.avgRssList.get(c), 4, true, c);//5,6精度最好 4+true最好 1.5306
+			    WKNN(online.avgRssList.get(c), 4, 0.1, true, c);//6精度最好 4+true 1.5297 exp=0.1:1.4217
+//			
+//			 histogramOnePos(offline.rssVectors, online.allRss.get(c), 4, 0.1, c);
+			}
+			results1.calculateOverAllDeviationAndVariance();
+			results2.calculateOverAllDeviationAndVariance();
+	}
+	
 	public static void main(String[] args) {
+		List<Integer> Ltimes=new ArrayList<>();
+		Random rd=new Random();
+		while(Ltimes.size()<64){
+			int r=rd.nextInt(109);
+			if(!Ltimes.contains(r)){
+				Ltimes.add(r);
+			}
+		}
+		Collections.sort(Ltimes);
 		// (27,-99,-100)WKNN k=4 -1.423 KNN-1.428 1.4219 avail在-95附近比较好
 		Offlinedata.Options options = new Offlinedata.Options(27, -99, -100);
-		offline = new Offlinedata(options,1,10);
+		offline = new Offlinedata(options,1,Ltimes);
 		aplist=offline.aplist;
 		System.out.println(offline.posXlist.size());
-//		for(dataprocess.Point point:offline.points) {
-//			System.out.println(point.toString());
-//		}
-		online = new OnlineData(Constant.ON_PATH, 1.0);
+		online = new OnlineData(Constant.ON_PATH, 1.0,Ltimes);
 		// 对46个线下点进行定位
-		for (int c = 0; c < 46; c++) {
-//			 KNN(online.avgRssList.get(c), 4, true, c);//5,6精度最好 4+true最好 1.5306
-//			 WKNN(online.avgRssList.get(c), 4, 0.1, true, c);//6精度最好 4+true 1.5297 exp=0.1:1.4217
+			for (int c = 0; c < 46; c++) {
+		//		KNN(online.avgRssList.get(c), 4, true, c);//5,6精度最好 4+true最好 1.5306
+			 WKNN(online.avgRssList.get(c), 4, 0.1, true, c);//6精度最好 4+true 1.5297 exp=0.1:1.4217
 //			
-			 histogramOnePos(offline.rssVectors, online.allRss.get(c), 4, 0.1, c);
-		}
-		results.calculateOverAllDeviationAndVariance();
+//			 histogramOnePos(offline.rssVectors, online.allRss.get(c), 4, 0.1, c);
+			}
+			results2.calculateOverAllDeviationAndVariance();
 		
 	}
 
@@ -53,6 +92,7 @@ public class TestPositioning {
 			Map<String, Double> offrss = offline.avgRssList.get(i);
 			//System.out.println(offline.avgRssList);
 			Map<String, Double> penaltyMap = offline.penaltyList.get(i);
+			//System.out.println(offrss);
 			double distance, sum = 0;
 			for (int j = 0; j < aplist.size(); j++) {
 				double penalty = penaltyMap.get(aplist.get(j));
@@ -74,6 +114,7 @@ public class TestPositioning {
 			//System.out.println(distance);
 			// System.out.println(Constant.OFF_POS_ARR[p++]+" distance "+": "+distance);//输出off与on的距离
 		}
+		//System.out.println(distanceMap);
 		double xsum = 0.0, ysum = 0.0;
 		int kk = 0;
 		for (Double d : distanceMap.keySet()) {
@@ -85,9 +126,9 @@ public class TestPositioning {
 			//System.out.println(offline.points[pos] + " d=" + d);
 		}
 		Point result = new Point(xsum / k, ysum / k);
-		results.addResult(result, online.points[index].distance(result));
-		System.out.println("result:" + result + "   real:" + online.points[index] + " deviation:"
-				+ online.points[index].distance(result));
+		results1.addResult(result, online.points[index].distance(result));
+//		System.out.println("result:" + result + "   real:" + online.points[index] + " deviation:"
+//				+ online.points[index].distance(result));
 	}
 
 	/**
@@ -145,9 +186,9 @@ public class TestPositioning {
 			// System.out.println(Constant.OFF_POS_ARR[pos]+" d="+entry.getKey()+" w="+weights[b]);
 		}
 		Point result = new Point(x, y);
-		results.addResult(result, online.points[index].distance(result));
-		System.out.println("result:" + result + "   real:" + online.points[index] + " deviation:"
-				+ online.points[index].distance(result));
+		results2.addResult(result, online.points[index].distance(result));
+//		System.out.println("result:" + result + "   real:" + online.points[index] + " deviation:"
+//				+ online.points[index].distance(result));
 	}
 
 	/**
@@ -156,7 +197,7 @@ public class TestPositioning {
 	 * @param online 线上数据
 	 */
 	public static void histogramOnePos(List<List<TreeMap<Double, Integer>>> rssVectorlist,
-			List<Map<String, Double>> onePosRss, int k, double exp, int c) {
+		List<Map<String, Double>> onePosRss, int k, double exp, int c) {
 		//rssVectorlist是在每个位置的每个ap的出现的每个rss的次数
 		//System.out.println(Constant.ON_POS_ARR[c] + "******************");
 		double[] deviations = new double[onePosRss.size()];
@@ -173,7 +214,7 @@ public class TestPositioning {
 			ysum+=resultPoints[i].y;
 		}
 		Point p=new Point(xsum/resultPoints.length,ysum/resultPoints.length);
-		results.addResult(p, p.distance(online.points[c]));
+		results3.addResult(p, p.distance(online.points[c]));
 		//System.out.println("result"+ p + "one point deviation:"+p.distance(online.points[c]));
 	}
 
@@ -190,18 +231,22 @@ public class TestPositioning {
 			double p = 1.0;// 这个点的衡量指标 可以是概率
 			int j = 0;
 			for (String ap : aplist) {
+				if(oneTimeRss.get(ap)!=null) {
 				Double onrss = oneTimeRss.get(ap);// 会不会为空？
 				if (onrss != null) {
 					Map<Double, Integer> rssVector = onePosHistogram.get(j);
-					Integer times = rssVector.get(onrss);
-					if (times != null)
-						p *= times;
+					if(rssVector.get(onrss)!=null) {
+						Integer times = rssVector.get(onrss);
+						if (times != null)
+							p *= times;
+					}
+				}
 				}
 				j++;
 			}
 			probMap.put(p, i);
 		}
-
+		//System.out.print(probMap.size()+" ");
 		double x = 0, y = 0, weight = 0.0;
 		int i = 0;
 		double[] weights = new double[k];
