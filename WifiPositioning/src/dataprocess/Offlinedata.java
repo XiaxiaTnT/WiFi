@@ -385,6 +385,7 @@ public class Offlinedata {
 		double []sum=new double[aplist.size()];
 		for(List<Map<String, Double>> eachpos : rssList){
 			Map<String,Double> eachavgrss=new HashMap<>();
+			//System.out.print(eachavgrss);
 			avgRssList.add(eachavgrss);
 			for(Map<String,Double> eachTimeRss : eachpos){
 				for(int i=0;i<aplist.size();i++){

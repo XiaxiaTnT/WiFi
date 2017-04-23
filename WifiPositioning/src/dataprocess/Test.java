@@ -13,6 +13,7 @@ public class Test {
 		for(int i=0;i<100;i++) {
 			TestPositioning tp=new TestPositioning();
 			tp.test(1,32);
+			//tp.testhistogram(6, 64);
 			rs1_dev+=tp.results1.getaverageDeviation();
 			rs1_var+=tp.results1.getvariance();
 			rs2_dev+=tp.results2.getaverageDeviation();

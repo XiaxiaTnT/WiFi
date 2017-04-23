@@ -29,7 +29,7 @@ public class Result {
 		double variance=Math.sqrt(variancesum);
 		this.averageDeviation=avgdeviation;
 		this.variance=variance;
-		//System.out.println("average deviation:"+this.averageDeviation+"  variance:"+this.variance);
+		System.out.println("average deviation:"+this.averageDeviation+"  variance:"+this.variance);
 	}
 	public double getaverageDeviation() {
 		return this.averageDeviation;
