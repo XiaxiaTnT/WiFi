@@ -24,6 +24,7 @@ public class TestPositioning {
 	public void test(int nnn,int ttt) {
 		results1=new Result();
 		results2=new Result();
+//		results3=new Result();
 		List<Integer> Ltimes=new ArrayList<>();
 		Random rd=new Random();
 		while(Ltimes.size()<ttt){
@@ -47,12 +48,43 @@ public class TestPositioning {
 			}
 			results1.calculateOverAllDeviationAndVariance();
 			results2.calculateOverAllDeviationAndVariance();
+//			results3.calculateOverAllDeviationAndVariance();
 	}
 	
 	public static void main(String[] args) {
+//		results3=new Result();
+//		List<Integer> Ltimes=new ArrayList<>();
+//		Random rd=new Random();
+//		while(Ltimes.size()<64){
+//			int r=rd.nextInt(109);
+//			if(!Ltimes.contains(r)){
+//				Ltimes.add(r);
+//			}
+//		}
+//		Collections.sort(Ltimes);
+//		// (27,-99,-100)WKNN k=4 -1.423 KNN-1.428 1.4219 avail在-95附近比较好
+//		Offlinedata.Options options = new Offlinedata.Options(27, -99, -100);
+//		offline = new Offlinedata(options,6,Ltimes);
+//		aplist=offline.aplist;
+//		//System.out.println(offline.posXlist.size());
+//		online = new OnlineData(Constant.ON_PATH, 1.0,Ltimes);
+//		// 对46个线下点进行定位
+//			for (int c = 0; c < 46; c++) {
+//		//		KNN(online.avgRssList.get(c), 4, true, c);//5,6精度最好 4+true最好 1.5306
+//			// WKNN(online.avgRssList.get(c), 4, 0.1, true, c);//6精度最好 4+true 1.5297 exp=0.1:1.4217
+////			
+//			 histogramOnePos(offline.rssVectors, online.allRss.get(c), 4, 0.1, c);
+//			}
+//			results3.calculateOverAllDeviationAndVariance();
+		TestPositioning tp=new TestPositioning();
+		tp.testhistogram(1, 64);
+		
+	}
+	public void testhistogram(int mm,int nn) {
+		results3=new Result();
 		List<Integer> Ltimes=new ArrayList<>();
 		Random rd=new Random();
-		while(Ltimes.size()<64){
+		while(Ltimes.size()<nn){
 			int r=rd.nextInt(109);
 			if(!Ltimes.contains(r)){
 				Ltimes.add(r);
@@ -61,21 +93,19 @@ public class TestPositioning {
 		Collections.sort(Ltimes);
 		// (27,-99,-100)WKNN k=4 -1.423 KNN-1.428 1.4219 avail在-95附近比较好
 		Offlinedata.Options options = new Offlinedata.Options(27, -99, -100);
-		offline = new Offlinedata(options,1,Ltimes);
+		offline = new Offlinedata(options,mm,Ltimes);
 		aplist=offline.aplist;
-		System.out.println(offline.posXlist.size());
+		//System.out.println(offline.posXlist.size());
 		online = new OnlineData(Constant.ON_PATH, 1.0,Ltimes);
 		// 对46个线下点进行定位
 			for (int c = 0; c < 46; c++) {
 		//		KNN(online.avgRssList.get(c), 4, true, c);//5,6精度最好 4+true最好 1.5306
-			 WKNN(online.avgRssList.get(c), 4, 0.1, true, c);//6精度最好 4+true 1.5297 exp=0.1:1.4217
+			// WKNN(online.avgRssList.get(c), 4, 0.1, true, c);//6精度最好 4+true 1.5297 exp=0.1:1.4217
 //			
-//			 histogramOnePos(offline.rssVectors, online.allRss.get(c), 4, 0.1, c);
+			 histogramOnePos(offline.rssVectors, online.allRss.get(c), 4, 0.1, c);
 			}
-			results2.calculateOverAllDeviationAndVariance();
-		
+			results3.calculateOverAllDeviationAndVariance();
 	}
-
 	/**
 	 * 用K-nearest neighbor进行定位
 	 * @param onrss 一个线上点的RSS
