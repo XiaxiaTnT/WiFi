@@ -14,52 +14,101 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:text="X坐标"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="100dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="10dp"
         android:id="@+id/posx" />
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="120dp"
-        android:id="@+id/pos_x"/>
+    <!--<EditText-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="22dp"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginStart="120dp"-->
+        <!--android:id="@+id/pos_x"/>-->
     <TextView
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:text="Y坐标"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="100dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="180dp"
         android:id="@+id/posy" />
-    <EditText
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="120dp"
-        android:id="@+id/pos_y"/>
+    <!--<EditText-->
+        <!--android:layout_width="150dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="112dp"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginStart="120dp"-->
+        <!--android:id="@+id/pos_y"/>-->
     <Button
-        android:layout_width="200dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="采集"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="220dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="60dp"
         android:id="@+id/getone"/>
     <Button
-        android:layout_width="200dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="完成"
-        android:layout_marginTop="270dp"
+        android:layout_marginTop="220dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="220dp"
+        android:id="@+id/done"/>
+    <NumberPicker
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="60dp"
-        android:id="@+id/done"/>
+        android:id="@+id/np1"></NumberPicker>
+    <NumberPicker
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="230dp"
+        android:id="@+id/np2"></NumberPicker>
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="APs"
+        android:layout_marginTop="310dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="80dp"
+        />
+    <ListView
+        android:layout_width="180dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="330dp"
+        android:layout_marginStart="10dp"
+        android:transcriptMode="alwaysScroll"
+        android:id="@+id/listview"></ListView>
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="postion"
+        android:layout_marginTop="310dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="260dp"
+        />
+    <ListView
+        android:layout_width="100dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="330dp"
+        android:layout_marginStart="240dp"
+        android:transcriptMode="alwaysScroll"
+        android:id="@+id/listview1"></ListView>
+
 </RelativeLayout>
